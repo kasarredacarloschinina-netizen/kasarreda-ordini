@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Kasarreda – Modulo Ordine</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:#f4f5f7;color:#222;}
+.header{background:#111;padding:10px 24px;display:flex;align-items:center;gap:16px;position:relative;}
+.header img{height:44px;width:auto;display:block;}
+.header-title{color:rgba(255,255,255,.4);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-left:auto;}
+.btn-settings{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;margin-left:12px;}
+.btn-settings:hover{background:rgba(255,255,255,.28);}
+.container{max-width:860px;margin:0 auto;padding:24px 16px 60px;}
+.card{background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:22px 24px;margin-bottom:18px;}
+.sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#aaa;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:8px;}
+.sn{width:20px;height:20px;background:#C0392B;color:#fff;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+label{font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.8px;}
+input,select{font-family:Arial,sans-serif;font-size:14px;padding:9px 12px;border:1.5px solid #ddd;border-radius:7px;background:#fff;color:#222;outline:none;width:100%;}
+input:focus,select:focus{border-color:#C0392B;}
+input[readonly]{background:#f8f8f8;color:#888;cursor:default;}
+select{cursor:pointer;}
+.ab{font-size:9px;background:#FADBD8;color:#922B21;padding:2px 6px;border-radius:20px;font-weight:700;text-transform:uppercase;margin-left:6px;}
+.sender{display:none;background:#111;border-radius:8px;padding:12px 16px;margin-top:12px;align-items:center;gap:12px;}
+.sender.show{display:flex;}
+.av{width:38px;height:38px;border-radius:50%;background:#C0392B;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.sname{color:#fff;font-size:14px;font-weight:700;}
+.semail{color:rgba(255,255,255,.5);font-size:12px;}
+.stag{margin-left:auto;background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:10px;padding:3px 8px;border-radius:20px;}
+.route{background:#f8f8f8;border:1px solid #eee;border-radius:7px;padding:9px 14px;font-size:12px;color:#666;margin-top:12px;}
+.route strong{color:#C0392B;}
+.art-header{display:grid;grid-template-columns:44px 1fr 74px 120px 36px;gap:8px;padding:0 4px;margin-bottom:6px;}
+.art-header span{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;}
+.articoli-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.articolo-row{display:grid;grid-template-columns:44px 1fr 74px 120px 36px;gap:8px;align-items:center;background:#f9f9f9;border:1.5px solid #eee;border-radius:8px;padding:8px 10px;}
+.art-num{font-size:10px;font-weight:700;color:#C0392B;text-align:center;line-height:1.3;}
+.articolo-row input[type=text],.articolo-row input[type=number]{background:#fff;border:1.5px solid #ddd;font-size:13px;padding:7px 10px;}
+.art-file-label{display:flex;align-items:center;gap:6px;padding:7px 10px;background:#fff;border:1.5px solid #ddd;border-radius:7px;cursor:pointer;font-size:11px;color:#666;white-space:nowrap;overflow:hidden;}
+.art-file-label:hover{border-color:#C0392B;color:#C0392B;}
+.art-file-label input[type=file]{display:none;}
+.art-file-name{font-size:11px;color:#C0392B;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px;}
+.btn-del{width:32px;height:32px;border-radius:6px;border:none;background:#FADBD8;color:#C0392B;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.btn-del:hover{background:#f5b7b1;}
+.btn-add{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:#f0f0f0;border:1.5px dashed #ccc;border-radius:8px;font-size:13px;font-weight:700;color:#666;cursor:pointer;}
+.btn-add:hover{background:#FADBD8;border-color:#C0392B;color:#C0392B;}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;}
+.btn{padding:12px 26px;border-radius:8px;font-family:Arial,sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:8px;}
+.btn:hover{opacity:.88;}
+.btn:active{transform:scale(.97);}
+.btn-pdf{background:#111;color:#fff;}
+.btn-mail{background:#C0392B;color:#fff;}
+.alert{padding:11px 15px;border-radius:7px;font-size:13px;margin-top:12px;display:none;}
+.aok{background:#D5F5E3;color:#1E8449;border:1px solid #A9DFBF;}
+.aerr{background:#FADBD8;color:#922B21;border:1px solid #F5B7B1;}
+/* IMPOSTAZIONI */
+.ov{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:16px;}
+.ov.show{display:flex;}
+.pwd-box{background:#fff;border-radius:12px;padding:32px 28px;max-width:380px;width:100%;text-align:center;}
+.pwd-box h2{font-size:18px;font-weight:900;color:#111;margin-bottom:6px;}
+.pwd-box p{font-size:13px;color:#888;margin-bottom:20px;}
+.pwd-input{width:100%;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:15px;text-align:center;letter-spacing:3px;outline:none;margin-bottom:14px;}
+.pwd-input:focus{border-color:#C0392B;}
+.pwd-err{color:#C0392B;font-size:12px;margin-bottom:10px;display:none;}
+.sbox{background:#fff;border-radius:12px;max-width:780px;width:100%;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;}
+.shead{background:#111;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;}
+.shead span{color:#fff;font-weight:900;font-size:16px;}
+.shead button{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;}
+.stabs{display:flex;border-bottom:2px solid #eee;background:#f8f8f8;}
+.stab{padding:12px 22px;font-size:13px;font-weight:700;color:#aaa;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.stab.active{color:#C0392B;border-bottom-color:#C0392B;background:#fff;}
+.sbody{flex:1;overflow-y:auto;padding:22px;}
+.sc{display:none;}
+.sc.active{display:block;}
+.slist{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.sitem{display:flex;align-items:center;gap:10px;background:#f9f9f9;border:1px solid #eee;border-radius:8px;padding:10px 14px;}
+.sitem-n{font-size:13px;font-weight:700;color:#222;flex:1;}
+.sitem-e{font-size:11px;color:#888;flex:1;}
+.sitem-del{background:#FADBD8;border:none;color:#C0392B;border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;flex-shrink:0;}
+.sitem-del:hover{background:#f5b7b1;}
+.aform{background:#f0f8ff;border:1.5px dashed #C0392B;border-radius:10px;padding:16px;}
+.aform-title{font-size:12px;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.arow{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;}
+.arow.single{grid-template-columns:1fr auto;}
+.afield{display:flex;flex-direction:column;gap:4px;}
+.afield label{font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.8px;}
+.afield input{font-family:Arial,sans-serif;font-size:13px;padding:8px 11px;border:1.5px solid #ddd;border-radius:7px;outline:none;}
+.afield input:focus{border-color:#C0392B;}
+.btn-ai{padding:9px 18px;background:#C0392B;color:#fff;border:none;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;}
+.btn-ai:hover{opacity:.88;}
+.ssaved{background:#D5F5E3;color:#1E8449;border:1px solid #A9DFBF;border-radius:6px;padding:8px 14px;font-size:12px;margin-top:10px;display:none;}
+.btn-sm{padding:9px 18px;font-size:13px;border-radius:7px;border:none;font-weight:700;cursor:pointer;}
+.btn-dark{background:#111;color:#fff;}
+.btn-gray{background:#f0f0f0;color:#666;}
+@media(max-width:600px){.g2,.g3,.art-header,.articolo-row{grid-template-columns:1fr;}.btn-row{flex-direction:column;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <img src="data:image/png;base64,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" alt="Kasarreda"/>
+  <span class="header-title">Modulo Ordine Fornitori</span>
+  <button class="btn-settings" onclick="apriImpostazioni()">&#9881; Impostazioni</button>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="sec"><span class="sn">1</span> Chi fa l'ordine</div>
+    <div class="g2">
+      <div class="field"><label>Seleziona venditore</label>
+        <select id="venditore" onchange="syncVenditore()">
+          <option value="">— Seleziona il tuo nome —</option>
+          <option value="ALESSANDRO CRISCIONE|kasarreda.alessandrocriscione@gmail.com">Alessandro Criscione</option>
+          <option value="ANGELA PALLAVICINO|kasarreda.angelapallavicino@gmail.com">Angela Pallavicino</option>
+          <option value="BARBARA CACCIOLA|kasarreda.barbaracacciola@gmail.com">Barbara Cacciola</option>
+          <option value="CARLO SCHININA|kasarreda.carloschinina@gmail.com">Carlo Schinina</option>
+          <option value="DANIELA LINO|kasarreda.danielalino@gmail.com">Daniela Lino</option>
+          <option value="DARIO CASCONE|kasarreda.dariocascone@gmail.com">Dario Cascone</option>
+          <option value="DESIREE VAMPA|kasarreda.desirevampa@gmail.com">Desirée Vampa</option>
+          <option value="GENNY CIPOLLA|kasarreda.gennycipolla@gmail.com">Genny Cipolla</option>
+          <option value="GIUSEPPE TERLATO|kasarreda.giuseppeterlato@gmail.com">Giuseppe Terlato</option>
+          <option value="IVANO PIANA|kasarreda.ivanopiana@gmail.com">Ivano Piana</option>
+          <option value="LUANA SIRACUSA|kasarreda.luanasiracusa@gmail.com">Luana Siracusa</option>
+          <option value="MARIA ZUCCARELLO|kasarreda.mariazuccarello@gmail.com">Maria Zuccarello</option>
+          <option value="NIKOLAI ATTARD|kasarreda.nikolaiattard@gmail.com">Nikolai Attard</option>
+          <option value="RITTIANNE AGIUS|kasarreda.rittienneagius@gmail.com">Rittianne Agius</option>
+          <option value="SALVO DI TRAPANI|kasarreda.salvoditrapani@gmail.com">Salvo Di Trapani</option>
+          <option value="SALVO PUCCIA|kasarreda.pucciasalvatore@gmail.com">Salvo Puccia</option>
+          <option value="SANDRO STRACQUADANIO|kasarreda.sandrostracquadanio@gmail.com">Sandro Stracquadanio</option>
+        </select>
+      </div>
+      <div class="field"><label>Email venditore <span class="ab">auto</span></label>
+        <input type="text" id="email-venditore" readonly placeholder="Seleziona il nome sopra"/>
+      </div>
+    </div>
+    <div class="sender" id="sender-box">
+      <div class="av" id="av">?</div>
+      <div><div class="sname" id="sname">—</div><div class="semail" id="semail">—</div></div>
+      <span class="stag">Mittente ordine</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec"><span class="sn">2</span> Ragione sociale fatturazione</div>
+    <div class="field"><label>Intestazione ordine</label>
+      <select id="ragione" onchange="syncRagione()">
+        <option value="">— Seleziona ragione sociale —</option>
+        <option value="GIEFFE ARREDI SRL">GIEFFE ARREDI SRL</option>
+        <option value="ENNECI ARREDI SRL UNIPERSONALE">ENNECI ARREDI SRL UNIPERSONALE</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec"><span class="sn">3</span> Fornitore destinatario</div>
+    <div class="g2">
+      <div class="field"><label>Seleziona azienda fornitore</label>
+        <select id="fornitore" onchange="syncFornitore()">
+          <option value="">— Seleziona fornitore —</option>
+          <option value="2B ITALIA|lenzorappresentanze@hotmail.it">2B Italia</option>
+          <option value="ADRIA ART|gianluca_macchelli@yahoo.it">Adria Art</option>
+          <option value="ADRIATICA|info@adriaticamobili.com">Adriatica</option>
+          <option value="BIBI RELAX|info@bibirelax.com">Bibi Relax</option>
+          <option value="CICIRIELLO|commercialeitalia@ciciriellogroup.com">Ciciriello</option>
+          <option value="COTTA DIVANI|cotta-sued@cotta.li">Cotta Divani</option>
+          <option value="DESIGNERWERK AG (COTTA DIVANI)|info@designwerk.li">Designerwerk AG (Cotta Divani)</option>
+          <option value="ENNEBI / TOP LINEA|ordini@ennebihome.it">Ennebi / Top Linea</option>
+          <option value="FELVER|luca@felvercasa.com">Felver</option>
+          <option value="IMAB GIORNO|sicilia.giorno@imab.com">Imab Giorno</option>
+          <option value="IMAB NOTTE|sicilia.notte@imab.com">Imab Notte</option>
+          <option value="ITALIA LIVING|commerciale@pgevolution.eu">Italia Living</option>
+          <option value="L.C.|ordini@lcmobili.com">L.C.</option>
+          <option value="RINALDI (MATERASSI)|commerciale.italia@rinaldigroup.com">Rinaldi (Materassi)</option>
+          <option value="SAMOA|aurora.akik@samoadivani.com">Samoa</option>
+          <option value="STILFAR|stilfaritalia@stilfaritalia.com">Stilfar</option>
+          <option value="STONES|s.girometti@stones.it">Stones</option>
+          <option value="VITO TURI HOME|vincenzo.delia@vitoturihome.it">Vito Turi Home</option>
+          <option value="WONDERLAND|wonderlanditaly67@gmail.com">Wonderland</option>
+          <option value="CARLO (TEST)|kasarreda.carloschinina@gmail.com">&#9881; CARLO (TEST)</option>
+        </select>
+      </div>
+      <div class="field"><label>Email fornitore <span class="ab">auto</span></label>
+        <input type="text" id="email-fornitore" readonly placeholder="Seleziona il fornitore sopra"/>
+      </div>
+    </div>
+    <div class="route">&#9993; Da: <strong id="from-lbl">—</strong> &nbsp;&#8594;&nbsp; A: <strong id="to-lbl">—</strong></div>
+  </div>
+
+  <div class="card">
+    <div class="sec"><span class="sn">4</span> Dati ordine</div>
+    <div class="g3">
+      <div class="field"><label>Data ordine</label><input type="date" id="data"/></div>
+      <div class="field"><label>Termine consegna</label><input type="date" id="termine"/></div>
+      <div class="field"><label>Riferimento ordine</label><input type="text" id="rif" placeholder="Es. ORD-001"/></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec"><span class="sn">5</span> Articoli da ordinare</div>
+    <div class="art-header">
+      <span style="text-align:center;">Riga</span>
+      <span>Descrizione articolo</span>
+      <span style="text-align:center;">Qtà</span>
+      <span>Allegato <span style="font-weight:400;color:#bbb;font-size:9px;">(Facoltativo)</span></span>
+      <span></span>
+    </div>
+    <div class="articoli-list" id="articoli-list"></div>
+    <button class="btn-add" onclick="aggiungiArticolo()">&#43; Aggiungi articolo</button>
+  </div>
+
+  <div class="card">
+    <div class="sec"><span class="sn">6</span> Campi auto-compilati</div>
+    <div class="g3">
+      <div class="field"><label>Azienda fornitore <span class="ab">auto</span></label><input type="text" id="az-display" readonly/></div>
+      <div class="field"><label>Fatturazione a <span class="ab">auto</span></label><input type="text" id="fatturazione" readonly/></div>
+      <div class="field"><label>Consegna <span class="ab">auto</span></label><input type="text" readonly value="Viale del Commercio - Modica/Pozzallo zona Asi"/></div>
+    </div>
+    <div class="field" style="margin-top:14px;"><label>Conferma ordine a <span class="ab">auto</span></label>
+      <input type="text" readonly value="kasa.arreda@gmail.com"/>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="btn-row">
+      <button class="btn btn-pdf" onclick="salvaPDF()">&#128196; Salva PDF ordine</button>
+      <button class="btn btn-mail" onclick="inviaEmail()">&#9993; Invia ordine al fornitore</button>
+    </div>
+    <div class="alert aok" id="aok"></div>
+    <div class="alert aerr" id="aerr"></div>
+  </div>
+
+</div>
+
+<!-- OVERLAY PASSWORD -->
+<div class="ov" id="pwd-ov">
+  <div class="pwd-box">
+    <h2>&#128274; Impostazioni</h2>
+    <p>Inserisci la password per accedere</p>
+    <input type="password" class="pwd-input" id="pwd-input" placeholder="Password" onkeydown="if(event.key==='Enter')verificaPwd()"/>
+    <div class="pwd-err" id="pwd-err">Password errata. Riprova.</div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button style="padding:10px 22px;background:#C0392B;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;" onclick="verificaPwd()">Accedi</button>
+      <button style="padding:10px 22px;background:#f0f0f0;color:#666;border:none;border-radius:8px;font-weight:700;cursor:pointer;" onclick="chiudiPwd()">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- PANNELLO IMPOSTAZIONI -->
+<div class="ov" id="set-ov">
+  <div class="sbox">
+    <div class="shead">
+      <span>&#9881; Impostazioni Kasarreda</span>
+      <button onclick="chiudiSet()">&#10005;</button>
+    </div>
+    <div class="stabs">
+      <div class="stab active" onclick="switchTab('v')">&#128100; Venditori</div>
+      <div class="stab" onclick="switchTab('f')">&#127970; Fornitori</div>
+      <div class="stab" onclick="switchTab('r')">&#128196; Ragioni Sociali</div>
+    </div>
+    <div class="sbody">
+      <div class="sc active" id="tc-v">
+        <div class="slist" id="sl-v"></div>
+        <div class="aform">
+          <div class="aform-title">&#43; Aggiungi venditore</div>
+          <div class="arow">
+            <div class="afield"><label>Nome e Cognome</label><input type="text" id="nv-n" placeholder="Es. Mario Rossi"/></div>
+            <div class="afield"><label>Email Gmail</label><input type="text" id="nv-e" placeholder="kasarreda.mario@gmail.com"/></div>
+            <button class="btn-ai" onclick="addV()">&#43; Aggiungi</button>
+          </div>
+        </div>
+        <div class="ssaved" id="sv-v">Salvato!</div>
+      </div>
+      <div class="sc" id="tc-f">
+        <div class="slist" id="sl-f"></div>
+        <div class="aform">
+          <div class="aform-title">&#43; Aggiungi fornitore</div>
+          <div class="arow">
+            <div class="afield"><label>Nome Azienda</label><input type="text" id="nf-n" placeholder="Es. Mobili Bianchi SRL"/></div>
+            <div class="afield"><label>Email ordini</label><input type="text" id="nf-e" placeholder="ordini@esempio.it"/></div>
+            <button class="btn-ai" onclick="addF()">&#43; Aggiungi</button>
+          </div>
+        </div>
+        <div class="ssaved" id="sv-f">Salvato!</div>
+      </div>
+      <div class="sc" id="tc-r">
+        <div class="slist" id="sl-r"></div>
+        <div class="aform">
+          <div class="aform-title">&#43; Aggiungi ragione sociale</div>
+          <div class="arow single">
+            <div class="afield"><label>Ragione sociale</label><input type="text" id="nr-n" placeholder="Es. NUOVA SRL - P.IVA 12345678901"/></div>
+            <button class="btn-ai" onclick="addR()">&#43; Aggiungi</button>
+          </div>
+        </div>
+        <div class="ssaved" id="sv-r">Salvato!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GAS = 'https://script.google.com/macros/s/AKfycbwGE_fTdZiW2u4JgJA_rzRXeKfEbPPwNkeHoLd6pTNX46BBE2lbCvdMcB1i-59rg2Vq/exec';
+const LOGO_EMAIL = 'https://kasarredastore.com/wp-content/uploads/2025/07/Logo-Kasarreda-1024x320.png';
+
+const V={
+  "ALESSANDRO CRISCIONE|kasarreda.alessandrocriscione@gmail.com":{n:"Alessandro Criscione",e:"kasarreda.alessandrocriscione@gmail.com"},
+  "ANGELA PALLAVICINO|kasarreda.angelapallavicino@gmail.com":{n:"Angela Pallavicino",e:"kasarreda.angelapallavicino@gmail.com"},
+  "BARBARA CACCIOLA|kasarreda.barbaracacciola@gmail.com":{n:"Barbara Cacciola",e:"kasarreda.barbaracacciola@gmail.com"},
+  "CARLO SCHININA|kasarreda.carloschinina@gmail.com":{n:"Carlo Schinina",e:"kasarreda.carloschinina@gmail.com"},
+  "DANIELA LINO|kasarreda.danielalino@gmail.com":{n:"Daniela Lino",e:"kasarreda.danielalino@gmail.com"},
+  "DARIO CASCONE|kasarreda.dariocascone@gmail.com":{n:"Dario Cascone",e:"kasarreda.dariocascone@gmail.com"},
+  "DESIREE VAMPA|kasarreda.desirevampa@gmail.com":{n:"Desiree Vampa",e:"kasarreda.desirevampa@gmail.com"},
+  "GENNY CIPOLLA|kasarreda.gennycipolla@gmail.com":{n:"Genny Cipolla",e:"kasarreda.gennycipolla@gmail.com"},
+  "GIUSEPPE TERLATO|kasarreda.giuseppeterlato@gmail.com":{n:"Giuseppe Terlato",e:"kasarreda.giuseppeterlato@gmail.com"},
+  "IVANO PIANA|kasarreda.ivanopiana@gmail.com":{n:"Ivano Piana",e:"kasarreda.ivanopiana@gmail.com"},
+  "LUANA SIRACUSA|kasarreda.luanasiracusa@gmail.com":{n:"Luana Siracusa",e:"kasarreda.luanasiracusa@gmail.com"},
+  "MARIA ZUCCARELLO|kasarreda.mariazuccarello@gmail.com":{n:"Maria Zuccarello",e:"kasarreda.mariazuccarello@gmail.com"},
+  "NIKOLAI ATTARD|kasarreda.nikolaiattard@gmail.com":{n:"Nikolai Attard",e:"kasarreda.nikolaiattard@gmail.com"},
+  "RITTIANNE AGIUS|kasarreda.rittienneagius@gmail.com":{n:"Rittianne Agius",e:"kasarreda.rittienneagius@gmail.com"},
+  "SALVO DI TRAPANI|kasarreda.salvoditrapani@gmail.com":{n:"Salvo Di Trapani",e:"kasarreda.salvoditrapani@gmail.com"},
+  "SALVO PUCCIA|kasarreda.pucciasalvatore@gmail.com":{n:"Salvo Puccia",e:"kasarreda.pucciasalvatore@gmail.com"},
+  "SANDRO STRACQUADANIO|kasarreda.sandrostracquadanio@gmail.com":{n:"Sandro Stracquadanio",e:"kasarreda.sandrostracquadanio@gmail.com"}
+};
+const F={
+  "2B ITALIA|lenzorappresentanze@hotmail.it":{n:"2B Italia",e:"lenzorappresentanze@hotmail.it"},
+  "ADRIA ART|gianluca_macchelli@yahoo.it":{n:"Adria Art",e:"gianluca_macchelli@yahoo.it"},
+  "ADRIATICA|info@adriaticamobili.com":{n:"Adriatica",e:"info@adriaticamobili.com"},
+  "BIBI RELAX|info@bibirelax.com":{n:"Bibi Relax",e:"info@bibirelax.com"},
+  "CICIRIELLO|commercialeitalia@ciciriellogroup.com":{n:"Ciciriello",e:"commercialeitalia@ciciriellogroup.com"},
+  "COTTA DIVANI|cotta-sued@cotta.li":{n:"Cotta Divani",e:"cotta-sued@cotta.li"},
+  "DESIGNERWERK AG (COTTA DIVANI)|info@designwerk.li":{n:"Designerwerk AG",e:"info@designwerk.li"},
+  "ENNEBI / TOP LINEA|ordini@ennebihome.it":{n:"Ennebi / Top Linea",e:"ordini@ennebihome.it"},
+  "FELVER|luca@felvercasa.com":{n:"Felver",e:"luca@felvercasa.com"},
+  "IMAB GIORNO|sicilia.giorno@imab.com":{n:"Imab Giorno",e:"sicilia.giorno@imab.com"},
+  "IMAB NOTTE|sicilia.notte@imab.com":{n:"Imab Notte",e:"sicilia.notte@imab.com"},
+  "ITALIA LIVING|commerciale@pgevolution.eu":{n:"Italia Living",e:"commerciale@pgevolution.eu"},
+  "L.C.|ordini@lcmobili.com":{n:"L.C.",e:"ordini@lcmobili.com"},
+  "RINALDI (MATERASSI)|commerciale.italia@rinaldigroup.com":{n:"Rinaldi (Materassi)",e:"commerciale.italia@rinaldigroup.com"},
+  "SAMOA|aurora.akik@samoadivani.com":{n:"Samoa",e:"aurora.akik@samoadivani.com"},
+  "STILFAR|stilfaritalia@stilfaritalia.com":{n:"Stilfar",e:"stilfaritalia@stilfaritalia.com"},
+  "STONES|s.girometti@stones.it":{n:"Stones",e:"s.girometti@stones.it"},
+  "VITO TURI HOME|vincenzo.delia@vitoturihome.it":{n:"Vito Turi Home",e:"vincenzo.delia@vitoturihome.it"},
+  "WONDERLAND|wonderlanditaly67@gmail.com":{n:"Wonderland",e:"wonderlanditaly67@gmail.com"},
+  "CARLO (TEST)|kasarreda.carloschinina@gmail.com":{n:"CARLO (TEST)",e:"kasarreda.carloschinina@gmail.com"}
+};
+
+var artCount=0;
+
+function aggiungiArticolo(d,q){
+  artCount++;
+  var id=artCount;
+  var list=document.getElementById('articoli-list');
+  var n=list.children.length+1;
+  var row=document.createElement('div');
+  row.className='articolo-row'; row.id='ar'+id;
+  row.innerHTML=
+    '<div class="art-num">Riga<br><span style="font-size:15px;">'+n+'</span></div>'+
+    '<input type="text" id="ad'+id+'" placeholder="Es. Divano 3 posti mod. Comfort col. Grigio" value="'+(d||'')+'"/>'+
+    '<input type="number" id="aq'+id+'" placeholder="Qta" min="1" value="'+(q||'')+'" style="text-align:center;"/>'+
+    '<label class="art-file-label" id="afl'+id+'">'+
+      '<input type="file" id="af'+id+'" onchange="showFN('+id+')" accept="*/*"/>'+
+      '<span>&#128206;</span><span id="afn'+id+'" class="art-file-name">Allega file <small style="opacity:.55;">(Facoltativo)</small></span>'+
+    '</label>'+
+    '<button class="btn-del" onclick="delArt('+id+')">&#10005;</button>';
+  list.appendChild(row);
+  rinumera();
+}
+function showFN(id){
+  var f=document.getElementById('af'+id);
+  var l=document.getElementById('afn'+id);
+  if(f.files&&f.files[0]) l.textContent=f.files[0].name;
+  else l.innerHTML='Allega file <small style="opacity:.55;">(Facoltativo)</small>';
+}
+function delArt(id){var r=document.getElementById('ar'+id);if(r)r.remove();rinumera();}
+function rinumera(){
+  document.querySelectorAll('.articolo-row').forEach(function(r,i){
+    r.querySelector('.art-num').innerHTML='Riga<br><span style="font-size:15px;">'+(i+1)+'</span>';
+  });
+}
+function getArts(){
+  var items=[];
+  document.querySelectorAll('.articolo-row').forEach(function(r){
+    var inp=r.querySelectorAll('input[type=text],input[type=number]');
+    var desc=inp[0].value.trim(), qty=inp[1].value.trim();
+    var fi=r.querySelector('input[type=file]');
+    var fname=fi&&fi.files&&fi.files[0]?fi.files[0].name:'';
+    if(desc) items.push({desc:desc,qty:qty||'1',file:fname,fi:fi});
+  });
+  return items;
+}
+
+function syncVenditore(){
+  var s=document.getElementById('venditore').value,box=document.getElementById('sender-box');
+  if(s&&V[s]){
+    document.getElementById('email-venditore').value=V[s].e;
+    document.getElementById('av').textContent=V[s].n.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase();
+    document.getElementById('sname').textContent=V[s].n;
+    document.getElementById('semail').textContent=V[s].e;
+    document.getElementById('from-lbl').textContent=V[s].e;
+    box.classList.add('show');
+  } else {
+    document.getElementById('email-venditore').value='';
+    document.getElementById('from-lbl').textContent='—';
+    box.classList.remove('show');
+  }
+}
+function syncRagione(){document.getElementById('fatturazione').value=document.getElementById('ragione').value;}
+function syncFornitore(){
+  var s=document.getElementById('fornitore').value;
+  if(s&&F[s]){
+    document.getElementById('email-fornitore').value=F[s].e;
+    document.getElementById('az-display').value=F[s].n;
+    document.getElementById('to-lbl').textContent=F[s].e;
+  } else {
+    document.getElementById('email-fornitore').value='';
+    document.getElementById('az-display').value='';
+    document.getElementById('to-lbl').textContent='—';
+  }
+}
+function fmtDate(d){if(!d)return'—';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function errMsg(m){var e=document.getElementById('aerr');e.textContent=m;e.style.display='block';setTimeout(function(){e.style.display='none';},4000);}
+function okMsg(m){var e=document.getElementById('aok');e.textContent=m;e.style.display='block';setTimeout(function(){e.style.display='none';},5000);}
+function valida(){
+  if(!document.getElementById('venditore').value){errMsg('Seleziona il tuo nome.');return false;}
+  if(!document.getElementById('ragione').value){errMsg('Seleziona la ragione sociale.');return false;}
+  if(!document.getElementById('fornitore').value){errMsg('Seleziona il fornitore.');return false;}
+  if(!document.getElementById('data').value){errMsg('Inserisci la data ordine.');return false;}
+  if(!document.getElementById('rif').value){errMsg('Inserisci il riferimento ordine.');return false;}
+  if(getArts().length===0){errMsg('Aggiungi almeno un articolo.');return false;}
+  return true;
+}
+
+function salvaPDF(){
+  if(!valida())return;
+  var vs=document.getElementById('venditore').value;
+  var fs=document.getElementById('fornitore').value;
+  var vn=V[vs].n, fn=F[fs].n;
+  var data=fmtDate(document.getElementById('data').value);
+  var term=fmtDate(document.getElementById('termine').value);
+  var fatt=document.getElementById('fatturazione').value;
+  var rif=document.getElementById('rif').value;
+  var arts=getArts();
+  var righe='';
+  arts.forEach(function(a,i){
+    var bg=(i%2===0)?'#fff5f5':'#ffffff';
+    righe+='<tr style="background:'+bg+';"><td style="text-align:center;color:#C0392B;font-weight:900;padding:9px 8px;border-bottom:1px solid #eee;width:70px;">'+(i+1)+'</td><td style="font-size:12px;padding:9px 8px;border-bottom:1px solid #eee;font-weight:600;">'+a.desc+'</td><td style="text-align:center;font-size:15px;font-weight:900;color:#C0392B;padding:9px 8px;border-bottom:1px solid #eee;width:60px;">'+a.qty+'</td></tr>';
+  });
+  var logoHtml='<div style="background:#111;padding:8px 14px;border-radius:6px;display:inline-block;"><img src="data:image/png;base64,'+btoa(String.fromCharCode.apply(null,[]))+'" alt="KASARREDA" style="height:38px;"/></div>';
+  var logoBox='<div style="background:#111;color:#fff;font-weight:900;font-size:20px;letter-spacing:3px;padding:8px 16px;border-radius:6px;display:inline-block;">KASARREDA<div style="color:#aaa;font-size:8px;letter-spacing:2px;font-weight:400;margin-top:2px;">DOVE ARREDARE CASA CONVIENE</div></div>';
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"/><style>body{font-family:Arial,sans-serif;color:#1a1a1a;padding:30px 36px;max-width:820px;margin:0 auto;}.hdr{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #C0392B;padding-bottom:14px;margin-bottom:20px;}.title{font-size:17px;font-weight:900;color:#C0392B;letter-spacing:2px;text-transform:uppercase;text-align:right;}.ref{font-size:11px;color:#888;text-align:right;margin-top:4px;}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;margin-bottom:18px;}.lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#aaa;margin-bottom:3px;}.val{font-size:12px;font-weight:700;color:#1a1a1a;}table{width:100%;border-collapse:collapse;margin-bottom:18px;}thead tr{background:#C0392B;}thead th{color:#fff;padding:9px 8px;font-size:9px;text-align:left;letter-spacing:1.5px;text-transform:uppercase;}thead th:first-child{text-align:center;width:70px;}thead th:last-child{text-align:center;width:60px;}.confirm{background:#FEF9E7;border:1px solid #F9E79F;border-radius:5px;padding:10px 14px;font-size:11px;color:#7D6608;margin-bottom:16px;}.footer{border-top:1px solid #eee;padding-top:10px;font-size:9px;color:#aaa;text-align:center;margin-top:12px;}</style></head><body><div class="hdr"><div>'+logoBox+'</div><div><div class="title">Ordine di Acquisto</div><div class="ref">Rif: '+rif+' | Data: '+data+'</div></div></div><div class="grid2"><div><div class="lbl">Fornitore</div><div class="val">'+fn+'</div></div><div><div class="lbl">Venditore</div><div class="val">'+vn+'</div></div><div><div class="lbl">Data ordine</div><div class="val">'+data+'</div></div><div><div class="lbl">Termine consegna</div><div class="val">'+term+'</div></div></div><table><thead><tr><th>Riga</th><th>Descrizione Articolo</th><th>Qta</th></tr></thead><tbody>'+righe+'</tbody></table><div class="grid2"><div><div class="lbl">Fatturazione</div><div class="val">'+fatt+'</div></div><div><div class="lbl">Consegna</div><div class="val">Viale del Commercio - Modica/Pozzallo zona Asi</div></div></div><div class="confirm">Inviare conferma ordine a: <strong>kasa.arreda@gmail.com</strong></div><div class="footer">Kasarreda — Dove arredare casa conviene | Viale del Commercio, Modica/Pozzallo zona Asi</div></body></html>';
+  var w=window.open('','_blank','width=900,height=700');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(function(){w.print();},800);
+  okMsg('Finestra aperta — scegli "Salva come PDF" con nome: '+rif);
+}
+
+function inviaEmail(){
+  if(!valida())return;
+  var vs=document.getElementById('venditore').value,fs=document.getElementById('fornitore').value;
+  var vn=V[vs].n,ve=V[vs].e,fn=F[fs].n,fe=F[fs].e;
+  var data=fmtDate(document.getElementById('data').value);
+  var term=fmtDate(document.getElementById('termine').value);
+  var fatt=document.getElementById('fatturazione').value;
+  var rif=document.getElementById('rif').value;
+  var arts=getArts();
+  var righeEmail='';
+  arts.forEach(function(a,i){
+    var bg=(i%2===0)?'#fff5f5':'#ffffff';
+    righeEmail+='<tr style="background:'+bg+';"><td style="text-align:center;font-weight:900;color:#C0392B;padding:8px;border-bottom:1px solid #eee;">Riga '+(i+1)+'</td><td style="padding:8px;border-bottom:1px solid #eee;font-weight:600;">'+a.desc+'</td><td style="text-align:center;font-weight:900;color:#C0392B;padding:8px;border-bottom:1px solid #eee;">'+a.qty+'</td></tr>';
+  });
+  var soggetto='Ordine di Acquisto - Kasarreda - Rif. '+rif;
+  var corpoHTML='<div style="font-family:Arial,sans-serif;max-width:700px;color:#222;">'+
+    '<div style="background:#111;padding:10px 16px;border-radius:6px;margin-bottom:20px;display:inline-block;"><img src="'+LOGO_EMAIL+'" alt="Kasarreda" style="height:40px;width:auto;display:block;"/></div>'+
+    '<p>Gentile <strong>'+fn+'</strong>,</p>'+
+    '<p style="margin:10px 0;">con la presente Le trasmettiamo il seguente ordine di acquisto:</p>'+
+    '<table style="width:100%;border-collapse:collapse;margin:14px 0;border:1px solid #eee;">'+
+      '<thead><tr style="background:#C0392B;">'+
+        '<th style="color:#fff;padding:8px;font-size:10px;letter-spacing:1px;width:80px;">RIGA</th>'+
+        '<th style="color:#fff;padding:8px;font-size:10px;letter-spacing:1px;text-align:left;">DESCRIZIONE ARTICOLO</th>'+
+        '<th style="color:#fff;padding:8px;font-size:10px;letter-spacing:1px;width:60px;">QTA</th>'+
+      '</tr></thead>'+
+      '<tbody>'+righeEmail+'</tbody>'+
+    '</table>'+
+    '<table style="width:100%;border-collapse:collapse;margin:14px 0;">'+
+      '<tr><td style="width:50%;padding:6px 0;"><span style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Data ordine</span><br><strong>'+data+'</strong></td>'+
+          '<td style="padding:6px 0;"><span style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Termine consegna</span><br><strong>'+term+'</strong></td></tr>'+
+      '<tr><td style="padding:6px 0;"><span style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Fatturazione</span><br><strong>'+fatt+'</strong></td>'+
+          '<td style="padding:6px 0;"><span style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Venditore</span><br><strong>'+vn+'</strong></td></tr>'+
+    '</table>'+
+    '<div style="background:#FEF9E7;border:1px solid #F9E79F;border-radius:5px;padding:10px 14px;font-size:12px;color:#7D6608;margin:14px 0;">'+
+      'Inviare conferma ordine a: <strong>kasa.arreda@gmail.com</strong>'+
+    '</div>'+
+    '<p style="font-size:12px;color:#666;margin-top:16px;">Cordiali saluti,<br><strong>'+vn+'</strong><br>Kasarreda</p>'+
+    '</div>';
+  var corpoTesto=arts.map(function(a,i){return (i+1)+'. '+a.desc+'  [Qta: '+a.qty+']';}).join('\n');
+  var allegatiPromises=[];
+  arts.forEach(function(a){
+    if(a.fi&&a.fi.files&&a.fi.files[0]){
+      var file=a.fi.files[0];
+      allegatiPromises.push(new Promise(function(resolve){
+        var reader=new FileReader();
+        reader.onload=function(e){resolve({nome:file.name,tipo:file.type,b64:e.target.result.split(',')[1]});};
+        reader.readAsDataURL(file);
+      }));
+    }
+  });
+  var btn=document.querySelector('.btn-mail');
+  var orig=btn.innerHTML;
+  btn.innerHTML='&#9203; Invio in corso...';
+  btn.disabled=true;
+  btn.style.opacity='0.7';
+  Promise.all(allegatiPromises).then(function(allegati){
+    return fetch(GAS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({emailFornitore:fe,emailVenditore:ve,oggetto:soggetto,corpoHTML:corpoHTML,corpo:corpoTesto,allegati:allegati})});
+  }).then(function(){
+    btn.innerHTML=orig; btn.disabled=false; btn.style.opacity='1';
+    okMsg('Email inviata a '+fe+'!');
+  }).catch(function(err){
+    btn.innerHTML=orig; btn.disabled=false; btn.style.opacity='1';
+    errMsg('Errore: '+err.message);
+  });
+}
+
+var PWD='giovannigalli';
+var BASE_V=Object.keys(V).map(function(k){return{key:k,n:V[k].n,e:V[k].e};});
+var BASE_F=Object.keys(F).map(function(k){return{key:k,n:F[k].n,e:F[k].e};});
+var BASE_R=['GIEFFE ARREDI SRL','ENNECI ARREDI SRL UNIPERSONALE'];
+var extraV=[], extraF=[], extraR=[];
+function mergeArr(base,extra,keyProp){
+  var result=base.slice();
+  extra.forEach(function(ex){
+    var exists=result.some(function(b){return keyProp?b[keyProp]===ex[keyProp]:b===ex;});
+    if(!exists) result.push(ex);
+  });
+  return result;
+}
+var dV=BASE_V.slice();
+var dF=BASE_F.slice();
+var dR=BASE_R.slice();
+function initSelects(){
+  dV.forEach(function(v){V[v.key]={n:v.n,e:v.e};});
+  dF.forEach(function(f){F[f.key]={n:f.n,e:f.e};});
+  rebuildSel('venditore',dV,'key','n','— Seleziona il tuo nome —');
+  rebuildSel('fornitore',dF,'key','n','— Seleziona fornitore —');
+  rebuildSel('ragione',dR,null,null,'— Seleziona ragione sociale —');
+}
+function caricaDalGAS(){
+  var loadEl=document.createElement('div');
+  loadEl.id='gas-loading';
+  loadEl.style.cssText='position:fixed;bottom:16px;right:16px;background:#111;color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;z-index:9999;';
+  loadEl.textContent='Caricamento dati...';
+  document.body.appendChild(loadEl);
+  fetch(GAS+'?action=getSettings',{method:'GET',mode:'cors'})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data.status==='ok'){
+      extraV=data.extraV||[];
+      extraF=data.extraF||[];
+      extraR=data.extraR||[];
+      dV=mergeArr(BASE_V,extraV,'key');
+      dF=mergeArr(BASE_F,extraF,'key');
+      dR=mergeArr(BASE_R,extraR,null);
+      sortAlpha(dV,'n'); sortAlpha(dF,'n'); sortAlpha(dR,null);
+      initSelects();
+    }
+  })
+  .catch(function(){
+    sortAlpha(dV,'n'); sortAlpha(dF,'n'); sortAlpha(dR,null);
+    initSelects();
+  })
+  .finally(function(){
+    var el=document.getElementById('gas-loading');
+    if(el) el.remove();
+  });
+}
+function salvaSulGAS(){
+  console.log('Salvataggio su GAS con:', {extraV:extraV,extraF:extraF,extraR:extraR});
+  return fetch(GAS,{
+    method:'POST',
+    mode:'cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'saveSettings',extraV:extraV,extraF:extraF,extraR:extraR})
+  }).then(function(response){
+    console.log('Risposta da GAS:', response.status);
+    if(!response.ok) throw new Error('Errore HTTP '+response.status);
+    return response.json().catch(function(){return {status:'ok'};});
+  }).then(function(data){
+    console.log('Dati salvati correttamente:', data);
+    return data;
+  }).catch(function(err){
+    console.error('Errore nel salvataggio:', err);
+    throw err;
+  });
+}
+function sortAlpha(arr, key){
+  arr.sort(function(a,b){
+    var na = key ? a[key].toLowerCase() : a.toLowerCase();
+    var nb = key ? b[key].toLowerCase() : b.toLowerCase();
+    return na < nb ? -1 : na > nb ? 1 : 0;
+  });
+}
+function rebuildSel(selId, arr, keyProp, labelProp, placeholder){
+  var sel=document.getElementById(selId);
+  var cur=sel.value;
+  sel.innerHTML='<option value="">'+placeholder+'</option>';
+  arr.forEach(function(item){
+    var o=document.createElement('option');
+    o.value = keyProp ? item[keyProp] : item;
+    o.textContent = labelProp ? item[labelProp] : item;
+    sel.appendChild(o);
+  });
+  sel.value=cur;
+}
+function apriImpostazioni(){
+  document.getElementById('pwd-input').value='';
+  document.getElementById('pwd-err').style.display='none';
+  document.getElementById('pwd-ov').classList.add('show');
+  setTimeout(function(){document.getElementById('pwd-input').focus();},200);
+}
+function chiudiPwd(){document.getElementById('pwd-ov').classList.remove('show');}
+function verificaPwd(){
+  if(document.getElementById('pwd-input').value===PWD){
+    document.getElementById('pwd-ov').classList.remove('show');
+    renderSet(); switchTab('v');
+    document.getElementById('set-ov').classList.add('show');
+  } else {
+    document.getElementById('pwd-err').style.display='block';
+    document.getElementById('pwd-input').value='';
+    document.getElementById('pwd-input').focus();
+  }
+}
+function chiudiSet(){document.getElementById('set-ov').classList.remove('show');}
+function switchTab(t){
+  document.querySelectorAll('.stab').forEach(function(el,i){el.classList.toggle('active',['v','f','r'][i]===t);});
+  document.querySelectorAll('.sc').forEach(function(el){el.classList.toggle('active',el.id==='tc-'+t);});
+}
+function renderSet(){
+  var lv=document.getElementById('sl-v'); lv.innerHTML='';
+  dV.forEach(function(v){
+    var d=document.createElement('div'); d.className='sitem';
+    d.innerHTML='<span class="sitem-n">'+v.n+'</span><span class="sitem-e">'+v.e+'</span>';
+    var btn=document.createElement('button');
+    btn.className='sitem-del'; btn.innerHTML='&#128465;';
+    btn.onclick=(function(key,nome){return function(){delVbyKey(key,nome);};})(v.key,v.n);
+    d.appendChild(btn); lv.appendChild(d);
+  });
+  var lf=document.getElementById('sl-f'); lf.innerHTML='';
+  dF.forEach(function(f){
+    var d=document.createElement('div'); d.className='sitem';
+    d.innerHTML='<span class="sitem-n">'+f.n+'</span><span class="sitem-e">'+f.e+'</span>';
+    var btn=document.createElement('button');
+    btn.className='sitem-del'; btn.innerHTML='&#128465;';
+    btn.onclick=(function(key,nome){return function(){delFbyKey(key,nome);};})(f.key,f.n);
+    d.appendChild(btn); lf.appendChild(d);
+  });
+  var lr=document.getElementById('sl-r'); lr.innerHTML='';
+  dR.forEach(function(r){
+    var d=document.createElement('div'); d.className='sitem';
+    d.innerHTML='<span class="sitem-n" style="flex:2;">'+r+'</span>';
+    var btn=document.createElement('button');
+    btn.className='sitem-del'; btn.innerHTML='&#128465;';
+    btn.onclick=(function(val){return function(){delRbyVal(val);};})(r);
+    d.appendChild(btn); lr.appendChild(d);
+  });
+}
+function saved(t){var e=document.getElementById('sv-'+t);e.style.display='block';setTimeout(function(){e.style.display='none';},2500);}
+function addV(){
+  var n=document.getElementById('nv-n').value.trim();
+  var e=document.getElementById('nv-e').value.trim().toLowerCase();
+  if(!n||!e){alert('Inserisci nome ed email!');return;}
+  var k=n.toUpperCase()+'|'+e;
+  var newItem={key:k,n:n,e:e};
+  dV.push(newItem); V[k]={n:n,e:e};
+  extraV.push(newItem); salvaSulGAS();
+  sortAlpha(dV,'n');
+  rebuildSel('venditore',dV,'key','n','— Seleziona il tuo nome —');
+  document.getElementById('nv-n').value=''; document.getElementById('nv-e').value='';
+  renderSet(); saved('v');
+}
+function delVbyKey(key,nome){
+  if(!confirm('Eliminare "'+nome+'"?'))return;
+  delete V[key];
+  dV=dV.filter(function(v){return v.key!==key;});
+  extraV=extraV.filter(function(v){return v.key!==key;});
+  console.log('Tentativo di eliminare venditore:', nome, 'Key:', key);
+  salvaSulGAS().then(function() {
+    console.log('Venditore eliminato con successo');
+    sortAlpha(dV,'n');
+    rebuildSel('venditore',dV,'key','n','— Seleziona il tuo nome —');
+    renderSet(); 
+    saved('v');
+    alert('Venditore "'+nome+'" eliminato!');
+  }).catch(function(err) {
+    console.error('Errore eliminazione venditore:', err);
+    alert('Errore: impossibile eliminare il venditore. Controlla la console.');
+  });
+}
+function addF(){
+  var n=document.getElementById('nf-n').value.trim();
+  var e=document.getElementById('nf-e').value.trim().toLowerCase();
+  if(!n||!e){alert('Inserisci nome ed email!');return;}
+  var k=n.toUpperCase()+'|'+e;
+  var newItem={key:k,n:n,e:e};
+  dF.push(newItem); F[k]={n:n,e:e};
+  extraF.push(newItem); salvaSulGAS();
+  sortAlpha(dF,'n');
+  rebuildSel('fornitore',dF,'key','n','— Seleziona fornitore —');
+  document.getElementById('nf-n').value=''; document.getElementById('nf-e').value='';
+  renderSet(); saved('f');
+}
+function delFbyKey(key,nome){
+  if(!confirm('Eliminare "'+nome+'"?'))return;
+  delete F[key];
+  dF=dF.filter(function(f){return f.key!==key;});
+  extraF=extraF.filter(function(f){return f.key!==key;});
+  console.log('Tentativo di eliminare fornitore:', nome, 'Key:', key);
+  salvaSulGAS().then(function() {
+    console.log('Fornitore eliminato con successo');
+    sortAlpha(dF,'n');
+    rebuildSel('fornitore',dF,'key','n','— Seleziona fornitore —');
+    renderSet(); 
+    saved('f');
+    alert('Fornitore "'+nome+'" eliminato!');
+  }).catch(function(err) {
+    console.error('Errore eliminazione fornitore:', err);
+    alert('Errore: impossibile eliminare il fornitore. Controlla la console.');
+  });
+}
+function addR(){
+  var n=document.getElementById('nr-n').value.trim();
+  if(!n){alert('Inserisci la ragione sociale!');return;}
+  dR.push(n);
+  extraR.push(n); salvaSulGAS();
+  sortAlpha(dR,null);
+  rebuildSel('ragione',dR,null,null,'— Seleziona ragione sociale —');
+  document.getElementById('nr-n').value='';
+  renderSet(); saved('r');
+}
+function delRbyVal(val){
+  if(!confirm('Eliminare "'+val+'"?'))return;
+  dR=dR.filter(function(r){return r!==val;});
+  extraR=extraR.filter(function(r){return r!==val;});
+  console.log('Tentativo di eliminare ragione sociale:', val);
+  salvaSulGAS().then(function() {
+    console.log('Ragione sociale eliminata con successo');
+    sortAlpha(dR,null);
+    rebuildSel('ragione',dR,null,null,'— Seleziona ragione sociale —');
+    renderSet(); 
+    saved('r');
+    alert('Ragione sociale "'+val+'" eliminata!');
+  }).catch(function(err) {
+    console.error('Errore eliminazione ragione sociale:', err);
+    alert('Errore: impossibile eliminare la ragione sociale. Controlla la console.');
+  });
+}
+caricaDalGAS();
+document.getElementById('data').valueAsDate=new Date();
+aggiungiArticolo();
+</script>
+</body>
+</html>
